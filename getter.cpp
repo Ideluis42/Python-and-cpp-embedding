@@ -1,13 +1,11 @@
 #define PY_SSIZE_T_CLEAN
+#include <stdio.h>
 #include </usr/include/python3.8/Python.h>
+#include <curses.h>
 
 using namespace std;
 #include <vector>
-#include <stdexcept>
-#include <stdio.h>
-#include <curses.h>
-
-#include </home/newHomeDir/wrapper_testing/pyhelper.hpp>
+#include </home/newHomeDir/Python-and-cpp-embedding/pyhelper.hpp>
 
 
 // gotten from: https://gist.github.com/rjzak/5681680
@@ -24,37 +22,33 @@ std::vector<double> listTupleToVector_Double(PyObject* incoming) {
 				PyObject *value = PyList_GetItem(incoming, i);
 				data.push_back( PyFloat_AsDouble(value) );
 			}
-		} //else {
-			//throw logic_error("Passed PyObject pointer was not a list or tuple!");
-		//}
+		}
 	}
 	return data;
 }
 
-
-
-std::vector<double> test()
+std::vector<double> get_python()
 {	
-
+	
+	//printf("initializing python interpreter \n");
 	Py_Initialize();
+
+	//printf("adding module paths \n");
 	PyRun_SimpleString("import sys");
-	PyRun_SimpleString("sys.path.append(\"/home/newHomeDir/wrapper_testing\")");
+	PyRun_SimpleString("sys.path.append(\"/home/newHomeDir/Python-and-cpp-embedding\")");
 
-	CPyObject pModule = PyImport_ImportModule("test_python");
+	//printf("importing module \n");
+	CPyObject pModule = PyImport_ImportModule("py_sender");
 
-
+	//printf("getting function name \n");
 	CPyObject pFunc = PyObject_GetAttrString(pModule, (char*)"roll_pitch_yaw");
+	//printf("calling function \n");
 	CPyObject pValue = PyObject_CallObject(pFunc, NULL);
 
+	//printf("storing results \n");
 	std::vector<double> results = listTupleToVector_Double(pValue);
 		
-
+	//printf("returning results \n");
 	return results;
 
-}
-
-std::vector<double> returns()
-{
-    std::vector<double> test = {0.1, 1.4, 5.6};
-    return test;
 }

@@ -1,9 +1,7 @@
-#include <stdio.h>
-#include </usr/include/python3.8/Python.h>
-#include <curses.h>
+#include </home/newHomeDir/Python-and-cpp-embedding/getter.cpp>
+#include </home/newHomeDir/Python-and-cpp-embedding/main.h>
 
-using namespace std;
-#include <vector>
+std::vector<double> stuff_to_return = {0.0, 0.0, 0.0};
 
 // Converting from a vector to a tuple
 // Method gotten from: https://gist.github.com/rjzak/5681680
@@ -25,7 +23,6 @@ PyObject* vectorToTuple_Double(const vector<double> &data) {
 // Will return whatever is needed to use in the python program--for now just returning an tuple
 static PyObject* py_mod(PyObject* self, PyObject* args)
 {
-    printf("in c++ py_mod method \n");
     return vectorToTuple_Double(stuff_to_return);
 }
 
@@ -56,13 +53,13 @@ static PyObject* PyInit_py(void)
 
 void wrapper()
 {
-	// get the module
+    // get the module
 	PyImport_AppendInittab("py", &PyInit_py);
 
 	Py_Initialize(); // initialize the python interpreter
 
 	// read the file you're going to be sending the c++ values to
-	const char pFile[] = "python_reciever.py";
+	const char pFile[] = "py_receiver.py";
 	FILE* fp = _Py_fopen(pFile, "r");
 
 	// run that file
@@ -71,3 +68,18 @@ void wrapper()
 	Py_Finalize();
 }
 
+int main()
+{
+
+    for(int i = 0; i <= 2; i++)
+    {
+        //printf("wrapping \n");
+        //wrapping 
+        wrapper();
+
+        //printf("getting \n");
+        // getting
+        stuff_to_return = get_python();
+    }
+
+}
